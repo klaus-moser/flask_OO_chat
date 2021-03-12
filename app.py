@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 
+from wtform_fields import RegistrationForm
 
 app = Flask(__name__)
 
@@ -9,7 +10,10 @@ url = 'postgres://atybdepvdbtiss:eff908bf955faa4f2363bfca5f52db6fddc399aa15cc609
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+
+    reg_form = RegistrationForm()
+
+    return render_template('index.html', form=reg_form)
 
 
 if __name__ == "__main__":
