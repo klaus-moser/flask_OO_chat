@@ -1,27 +1,24 @@
-import socketio
+from flask import Flask, render_template
 
-sio = socketio.Server()
-app = socketio.WSGIApp(sio, static_files={
-    '/': './public/'
-})
+from wtform_fields import RegistrationForm
 
 
-@sio.event
-def connect(sid: str, environ: dict) -> None:
-    """
-    Connect event from client to server.
-    :param sid: Session id created by socket server.
-    :param environ: Headers, cookies etc. from client.
-    :return: None.
-    """
-    print(sid, 'connected')
+app = Flask(__name__)
+
+# Configs
+app.secret_key = 'replace key later'
 
 
-@sio.event
-def disconnect(sid: str) -> None:
-    """
-    Disconnect server from client.
-    :param sid: Session id.
-    :return: None.
-    """
-    print(sid, 'disconnected')
+@app.route('/', methods=['GET', 'POST'])
+def index():
+
+    reg_form = RegistrationForm()
+
+    if reg_form.validate_on_submit():  # True if all validation rules are cleared
+        return "Great success!"
+
+    return render_template('index.html', form=reg_form)
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host='127.0.0.1', port=5000)
