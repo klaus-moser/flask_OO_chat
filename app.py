@@ -13,6 +13,9 @@ def index():
 
     reg_form = RegistrationForm()
 
+    if reg_form.validate_on_submit():  # True if all validation rules are cleared
+        return "Great success!"
+
     return render_template('index.html', form=reg_form)
 
 
