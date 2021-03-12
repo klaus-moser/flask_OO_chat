@@ -1,7 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from os import environ
 
 from src.wtform_fields import RegistrationForm
+from models.user import UserModel
 from src.db import db
 
 
@@ -33,8 +34,18 @@ def index():
     """
     reg_form = RegistrationForm()
 
-    if reg_form.validate_on_submit():  # True if all validation rules are cleared
-        return "Great success!"
+    if reg_form.validate_on_submit():  # True if all validation rules are fulfilled
+        username = reg_form.username.data
+        password = reg_form.password.data
+
+        # Check if user exists
+        if UserModel(username=username):
+            return jsonify({"message": "A user '{}' already exists!".format(username)}), 400
+
+        # Save to database
+        user = UserModel(username=username, password=password)
+        user.save_to_db()
+        return jsonify({"message": "User created successfully."}), 201
 
     return render_template('index.html', form=reg_form)
 
