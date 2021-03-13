@@ -1,7 +1,7 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, redirect, url_for
 from os import environ
 
-from src.wtform_fields import RegistrationForm
+from src.wtform_fields import RegistrationForm, LoginForm
 from models.user import UserModel
 from src.db import db
 
@@ -26,7 +26,7 @@ def create_tables() -> None:
     db.create_all()
 
 
-# Endpoint
+# Endpoints
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """
@@ -34,20 +34,33 @@ def index():
     """
     reg_form = RegistrationForm()
 
-    if reg_form.validate_on_submit():  # True if all validation rules are fulfilled
+    # Update database if validation succeeded [POST]
+    if reg_form.validate_on_submit():
         username = reg_form.username.data
         password = reg_form.password.data
 
-        # Check if user exists
-        if UserModel.find_by_username(username=username):
-            return jsonify({"message": "A user '{}' already exists!".format(username)}), 400
-
-        # Save to database
+        # Save user to database
         user = UserModel(username=username, password=password)
         user.save_to_db()
-        return jsonify({"message": "User created successfully."}), 201
+        return redirect(url_for('login'))
 
+    # Return the index page [GET]
     return render_template('index.html', form=reg_form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """
+    Login.
+    """
+    login_form = LoginForm()
+
+    # Allow login if validation succeeded [POST]
+    if login_form.validate_on_submit():
+        return "Logged in!"
+
+    # Return login page [GET]
+    return render_template("login.html", form=login_form)
 
 
 if __name__ == "__main__":
