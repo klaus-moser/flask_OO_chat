@@ -7,7 +7,7 @@ from models.user import UserModel
 
 class RegistrationForm(FlaskForm):
     """
-    This is th form class for the Registration.
+    This is the form class for the Registration.
     """
     username = StringField('username_label', validators=[
         InputRequired(message='Username required!'),
@@ -32,3 +32,30 @@ class RegistrationForm(FlaskForm):
         """
         if UserModel.find_by_username(username=username.data):
             raise ValidationError("A user '{}' already exists!".format(username.data))
+
+
+def invalid_credentials(form, field):
+
+    username_entered = form.username.data
+    password_entered = field.data
+
+    user = UserModel(username=username_entered, password=password_entered)
+
+    # Check if credentials are valid
+    if user.find_by_username is None:
+        raise ValidationError("Username or password is incorrect!")
+    elif password_entered != user.password:
+        raise ValidationError("Username or password is incorrect!")
+
+
+class LoginForm(FlaskForm):
+    """
+    This is the form class for the Registration.
+    """
+    username = StringField('username_label', validators=[
+        InputRequired(message='Username required!')])
+
+    password = PasswordField('password_label', validators=[
+        InputRequired(message='Password required!'), invalid_credentials])
+
+    submit_button = SubmitField('Login')
