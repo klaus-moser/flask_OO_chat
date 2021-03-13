@@ -23,7 +23,7 @@ class RegistrationForm(FlaskForm):
 
     submit_button = SubmitField('Create')
 
-    # Custom validator for username upfront
+    # Custom validator to check username upfront
     def validate_username(self, username) -> None:
         """
         Validate a given username.
@@ -34,21 +34,6 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("A user '{}' already exists!".format(username.data))
 
 
-def invalid_credentials(form, field):
-
-    username_entered = form.username.data
-    password_entered = field.data
-
-    # Search database for given user
-    user = UserModel.find_by_username(username=username_entered)
-
-    # Check if credentials are valid
-    if user is None:
-        raise ValidationError("Username or password is incorrect!")
-    elif password_entered != user.password:
-        raise ValidationError("Username or password is incorrect!")
-
-
 class LoginForm(FlaskForm):
     """
     This is the form class for the Registration.
@@ -57,6 +42,27 @@ class LoginForm(FlaskForm):
         InputRequired(message='Username required!')])
 
     password = PasswordField('password_label', validators=[
-        InputRequired(message='Password required!'), invalid_credentials])
+        InputRequired(message='Password required!')])  # , invalid_credentials])
 
     submit_button = SubmitField('Login')
+
+    # Custom validator to check username during login
+    def validate_username(self, username_entered: StringField) -> None:
+
+        # Search database for given user
+        user = UserModel.find_by_username(username=username_entered.data)
+
+        # Check if username is valid (exists)
+        if user is None:
+            raise ValidationError("Username is incorrect!")
+
+    # Custom validator to check password during login
+    def validate_password(self, password_entered: PasswordField) -> None:
+
+        # Search database for given user
+        user = UserModel.find_by_username(username=self.username.data)
+
+        # Check if password is valid
+        if user is not None:
+            if password_entered.data != user.password:
+                raise ValidationError("Password is incorrect!")
