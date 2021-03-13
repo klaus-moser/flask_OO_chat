@@ -38,11 +38,7 @@ def index():
         username = reg_form.username.data
         password = reg_form.password.data
 
-        # Check if user exists
-        if UserModel.find_by_username(username=username):
-            return jsonify({"message": "A user '{}' already exists!".format(username)}), 400
-
-        # Save to database
+        # Save user to database
         user = UserModel(username=username, password=password)
         user.save_to_db()
         return jsonify({"message": "User created successfully."}), 201
