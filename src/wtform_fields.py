@@ -39,10 +39,11 @@ def invalid_credentials(form, field):
     username_entered = form.username.data
     password_entered = field.data
 
-    user = UserModel(username=username_entered, password=password_entered)
+    # Search database for given user
+    user = UserModel.find_by_username(username=username_entered)
 
     # Check if credentials are valid
-    if user.find_by_username is None:
+    if user is None:
         raise ValidationError("Username or password is incorrect!")
     elif password_entered != user.password:
         raise ValidationError("Username or password is incorrect!")
