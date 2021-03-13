@@ -39,7 +39,7 @@ def index():
         password = reg_form.password.data
 
         # Check if user exists
-        if UserModel(username=username):
+        if UserModel.find_by_username(username=username):
             return jsonify({"message": "A user '{}' already exists!".format(username)}), 400
 
         # Save to database
