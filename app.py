@@ -40,7 +40,7 @@ def create_tables() -> None:
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """
-    Index.
+    Index page.
     """
     reg_form = RegistrationForm()
 
@@ -64,7 +64,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Login.
+    Login page.
     """
     login_form = LoginForm()
 
@@ -75,27 +75,30 @@ def login():
         user = UserModel.find_by_username(username=login_form.username.data)
         login_user(user=user)
 
-        # Check if user is logged in
-        if current_user.is_authenticated:
-            return "Logged in!"
-        return "NOT logged in ..."
+        # Redirect to chat, then check there if user is logged in
+        return redirect(url_for('chat'))
 
     # Return login page [GET]
     return render_template("login.html", form=login_form)
 
 
 @app.route('/chat', methods=['GET', 'POST'])
-@login_required  # flask-login: Decorator to check if/that user is logged in
-def chat():
-
-
+def chat() -> str:
+    """
+    Chat page.
+    :return: Message.
+    """
+    if not current_user.is_authenticated:
+        return "Please login!"
     return "Lets chat!"
 
 
 @app.route('/logout', methods=['GET'])
-@login_required  # flask-login: Decorator to check if/that user is logged in
-def logout():
-
+def logout() -> str:
+    """
+    Logout page.
+    :return: Message.
+    """
     # Logout user
     logout_user()
     return "Logged out!"
