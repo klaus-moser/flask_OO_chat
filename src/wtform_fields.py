@@ -38,7 +38,6 @@ class LoginForm(FlaskForm):
     """
     This is the form class for the Registration.
     """
-
     def validate_credentials(self, field: PasswordField) -> None:
         """
         Check the credentials from the LoginForm.
