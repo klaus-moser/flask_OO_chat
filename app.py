@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for
+from passlib.hash import pbkdf2_sha256
 from os import environ
 
 from src.wtform_fields import RegistrationForm, LoginForm
@@ -39,8 +40,11 @@ def index():
         username = reg_form.username.data
         password = reg_form.password.data
 
+        # Hashing: incl. 16-byte salt (auto) + 29.000 iterations (default)
+        hashed_password = pbkdf2_sha256.hash(password)
+
         # Save user to database
-        user = UserModel(username=username, password=password)
+        user = UserModel(username=username, password=hashed_password)
         user.save_to_db()
         return redirect(url_for('login'))
 
