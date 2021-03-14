@@ -38,31 +38,27 @@ class LoginForm(FlaskForm):
     """
     This is the form class for the Registration.
     """
+
+    def validate_credentials(self, field: PasswordField) -> None:
+        """
+        Check the credentials from the LoginForm.
+        :return: None.
+        """
+        username_entered = self.username.data
+        password_entered = field.data
+
+        user = UserModel.find_by_username(username=username_entered)
+
+        # Check if credentials are valid
+        if user is None:
+            raise ValidationError("Username or password is incorrect!")
+        elif password_entered != user.password:
+            raise ValidationError("Username or password is incorrect!")
+
     username = StringField('username_label', validators=[
         InputRequired(message='Username required!')])
 
     password = PasswordField('password_label', validators=[
-        InputRequired(message='Password required!')])  # , invalid_credentials])
+        InputRequired(message='Password required!'), validate_credentials])
 
     submit_button = SubmitField('Login')
-
-    # Custom validator to check username during login
-    def validate_username(self, username_entered: StringField) -> None:
-
-        # Search database for given user
-        user = UserModel.find_by_username(username=username_entered.data)
-
-        # Check if username is valid (exists)
-        if user is None:
-            raise ValidationError("Username is incorrect!")
-
-    # Custom validator to check password during login
-    def validate_password(self, password_entered: PasswordField) -> None:
-
-        # Search database for given user
-        user = UserModel.find_by_username(username=self.username.data)
-
-        # Check if password is valid
-        if user is not None:
-            if password_entered.data != user.password:
-                raise ValidationError("Password is incorrect!")
