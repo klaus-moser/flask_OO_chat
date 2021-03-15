@@ -2,9 +2,23 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <!-- Title -->
         <title>{% block title %}{% endblock %} - OO-chat</title>
     </head>
     <body>
+        <!-- Flash message incl. categories-->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            <!-- message: list[(tuples)] -->
+            {% if messages %}
+
+                <!-- Tuple: ('category', 'message') -->
+                Category: {{ messages[0][0] }}
+                {{ messages[0][1] }}
+
+            {% endif %}
+        {% endwith %}
+
+        <!-- Content of the webpages -->
         {% block content %}
 
         {% endblock %}
