@@ -1,10 +1,10 @@
 from flask import Flask, render_template, redirect, url_for
-from flask_login import LoginManager, login_user, current_user, login_required, logout_user
+from flask_login import LoginManager, login_user, current_user, logout_user
 from passlib.hash import pbkdf2_sha256
 from os import environ
 
 from src.wtform_fields import RegistrationForm, LoginForm
-from models.user import UserModel
+from src.models.user import UserModel
 from src.db import db
 
 

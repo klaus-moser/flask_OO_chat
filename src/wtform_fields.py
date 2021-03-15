@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, EqualTo, ValidationError
 from passlib.hash import pbkdf2_sha256
 
-from models.user import UserModel
+from src.models.user import UserModel
 
 
 class RegistrationForm(FlaskForm):
