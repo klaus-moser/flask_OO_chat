@@ -29,7 +29,10 @@ class UserModel(db.Model, UserMixin):
         :param id_: ID to search for the user.
         :return: Object of the User class.
         """
-        return cls.query.filter_by(id=id_).first()
+        # return cls.query.filter_by(id=id_).first()
+        test = cls.query.filter_by(id=id_).first()
+        test2 = cls.query.get(id=id_)
+        return cls.query.get(id=id_)
         # TODO:
         #  check: return cls.query.get(int(id=id_)
         #  get(id) is a special flask-restful method

@@ -20,12 +20,6 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-
-@login_manager.user_loader
-def load_user(user_id):
-    return UserModel.find_by_id(id_=user_id)
-
-
 # Create database before first request
 @app.before_first_request
 def create_tables() -> None:
@@ -34,6 +28,14 @@ def create_tables() -> None:
     before the first request.
     """
     db.create_all()
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return UserModel.find_by_id(id_=user_id)
+
+
+
 
 
 # Endpoints
