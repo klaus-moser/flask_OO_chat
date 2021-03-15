@@ -7,6 +7,7 @@ from src.wtform_fields import RegistrationForm, LoginForm
 from models.user import UserModel
 from src.db import db
 
+
 # Configure app
 app = Flask(__name__)
 app.secret_key = ']K~B;aF>5/`/]h3xoZ8'
@@ -16,11 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL', 'sqlite:///d
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
-# Configure flask login
-login_manager = LoginManager()
-login_manager.init_app(app)
 
-# Create database before first request
 @app.before_first_request
 def create_tables() -> None:
     """
@@ -30,12 +27,19 @@ def create_tables() -> None:
     db.create_all()
 
 
+# Configure flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(user_id: str) -> object:
+    """
+    Load a user when he logs in an give it to the login_manager.
+    :param user_id: Userid.
+    :return: User object.
+    """
     return UserModel.find_by_id(id_=user_id)
-
-
-
 
 
 # Endpoints
@@ -72,7 +76,6 @@ def login():
 
     # Allow login if validation succeeded [POST]
     if login_form.validate_on_submit():
-
         # Login user
         user = UserModel.find_by_username(username=login_form.username.data)
         login_user(user=user)
