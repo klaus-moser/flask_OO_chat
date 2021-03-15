@@ -1,7 +1,8 @@
 from src.db import db
+from flask_login import UserMixin
 
 
-class UserModel(db.Model):
+class UserModel(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -29,6 +30,11 @@ class UserModel(db.Model):
         :return: Object of the User class.
         """
         return cls.query.filter_by(id=id_).first()
+        # TODO:
+        #  check: return cls.query.get(int(id=id_)
+        #  get(id) is a special flask-restful method
+        #  to specifically fetch the id of a user
+
 
     def save_to_db(self) -> None:
         """
@@ -36,3 +42,5 @@ class UserModel(db.Model):
         """
         db.session.add(self)
         db.session.commit()
+
+    # TODO: delete_from_db()
