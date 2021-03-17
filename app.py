@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_user, current_user, logout_user
+from flask_socketio import SocketIO, send
 from passlib.hash import pbkdf2_sha256
 from os import environ
 
@@ -15,7 +16,10 @@ app.secret_key = ']K~B;aF>5/`/]h3xoZ8'
 # Configure database
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
+db.init_app(app=app)
+
+# Initialize Flask-SocketIO
+socketio = SocketIO(app=app)
 
 
 @app.before_first_request
@@ -29,7 +33,7 @@ def create_tables() -> None:
 
 # Configure flask-login
 login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager.init_app(app=app)
 
 
 @login_manager.user_loader
@@ -118,6 +122,16 @@ def logout() -> str:
     flash("You've been logged out!", 'success')
     return redirect(url_for('login'))
 
+# Event handlers
+@socketio.on('message')
+def message(data):
+    print(data)
+    print(f"\n\n{data}\n\n")
+
+    send(data)  # It will send a message to the connected client(s)
+    # pushes on default to the event-bucket 'message'
+
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # app.run(debug=True, host='0.0.0.0', port=5000)
+    socketio.run(debug=True, host='0.0.0.0', port=5000, app=app)
