@@ -19,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app=app)
 
 # Initialize Flask-SocketIO
-socketio = SocketIO(app=app)
+socketio = SocketIO(app=app, logger=False, engineio_logger=False)
 
 
 @app.before_first_request
@@ -100,13 +100,15 @@ def chat() -> str:
     Chat page.
     :return: Message.
     """
+    # TODO: Uncomment lines after testing
+    """
     if not current_user.is_authenticated:
 
         # Flash message
         flash("Please login before accessing the chat!", 'danger')
         return redirect(url_for('login'))
-
-    return "Lets chat!"
+    """
+    return render_template('chat.html')
 
 
 @app.route('/logout', methods=['GET'])
@@ -122,10 +124,11 @@ def logout() -> str:
     flash("You've been logged out!", 'success')
     return redirect(url_for('login'))
 
+
 # Event handlers
 @socketio.on('message')
 def message(data):
-    print(data)
+
     print(f"\n\n{data}\n\n")
 
     send(data)  # It will send a message to the connected client(s)
