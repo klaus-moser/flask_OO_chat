@@ -130,7 +130,7 @@ def logout() -> str:
 def message(data):
 
     print(f"\n\n{data}\n\n")
-
+    # TODO: Weiter 17:32
     send(data)  # It will send a message to the connected client(s)
     # pushes on default to the event-bucket 'message'
 
