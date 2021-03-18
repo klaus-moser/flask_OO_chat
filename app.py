@@ -129,13 +129,15 @@ def logout() -> str:
 # Event handlers
 @socketio.on('message')
 def message(data):
-
+    # TODO: add function description
     # It will send a message to the connected client(s)
     # pushes to the default/predefined event-bucket 'message'
     print("{}".format(data))
-    send(data)
+    send({'msg': data['msg'],
+          'username': data['username'],
+          # TODO: Is there a better timestamp format?
+          'time_stamp': strftime('%b-%d %I:%M%p', localtime())})
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, host='0.0.0.0', port=5000)
     socketio.run(debug=True, host='0.0.0.0', port=5000, app=app)

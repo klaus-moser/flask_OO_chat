@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    var socket = io();
+    // Init socketIO
+    let socket = io();
 
     // Display connect status message
     socket.on('connect', function() {
@@ -13,10 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const p = document.createElement('p');
         const br = document.createElement('br');
         const span_username = document.createElement('span');
+        const span_timestamp = document.createElement('span');
 
-        // Set the inner html to the message text & username
+        // Set the inner html to the message text, username & timestamp
         span_username.innerHTML = data.username;
-        p.innerHTML = span_username.outerHTML + br.outerHTML +  data.msg + br.outerHTML;
+        span_timestamp.innerHTML = data.time_stamp;
+        p.innerHTML = span_username.outerHTML + br.outerHTML +  data.msg + br.outerHTML + span_timestamp.outerHTML;
 
         // Append the text to the area where the messages are displayed
         document.querySelector('#display-message-section').append(p);
@@ -26,6 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#send_message').onclick = () => {
         // Send message
         socket.send({'msg': document.querySelector('#user_message').value,
-            'username': username});
+            'username': username, 'time_stamp': ""});
     }
 })
