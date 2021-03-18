@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_user, current_user, logout_user
 from flask_socketio import SocketIO, send
 from passlib.hash import pbkdf2_sha256
+from time import localtime, strftime
 from os import environ
 
 from src.wtform_fields import RegistrationForm, LoginForm
@@ -108,7 +109,7 @@ def chat() -> str:
         flash("Please login before accessing the chat!", 'danger')
         return redirect(url_for('login'))
     """
-    return render_template('chat.html')
+    return render_template('chat.html', username=current_user.username)
 
 
 @app.route('/logout', methods=['GET'])
@@ -129,10 +130,10 @@ def logout() -> str:
 @socketio.on('message')
 def message(data):
 
-    print(f"\n\n{data}\n\n")
-    # TODO: Weiter 17:32
-    send(data)  # It will send a message to the connected client(s)
-    # pushes on default to the event-bucket 'message'
+    # It will send a message to the connected client(s)
+    # pushes to the default/predefined event-bucket 'message'
+    print("{}".format(data))
+    send(data)
 
 
 if __name__ == "__main__":
