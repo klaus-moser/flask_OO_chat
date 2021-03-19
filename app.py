@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_user, current_user, logout_user
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, join_room, leave_room
 from passlib.hash import pbkdf2_sha256
 from time import localtime, strftime
 from os import environ
@@ -8,7 +8,6 @@ from os import environ
 from src.wtform_fields import RegistrationForm, LoginForm
 from src.models.user import UserModel
 from src.db import db
-
 
 # Configure app
 app = Flask(__name__)
@@ -21,6 +20,7 @@ db.init_app(app=app)
 
 # Initialize Flask-SocketIO
 socketio = SocketIO(app=app, logger=False, engineio_logger=False)
+ROOMS = ["lounge", "news", "games"]  # define rooms
 
 
 @app.before_first_request
@@ -109,7 +109,7 @@ def chat() -> str:
         flash("Please login before accessing the chat!", 'danger')
         return redirect(url_for('login'))
     """
-    return render_template('chat.html', username=current_user.username)
+    return render_template('chat.html', username=current_user.username, rooms=ROOMS)
 
 
 @app.route('/logout', methods=['GET'])
@@ -135,8 +135,23 @@ def message(data):
     print("{}".format(data))
     send({'msg': data['msg'],
           'username': data['username'],
-          # TODO: Is there a better timestamp format?
-          'time_stamp': strftime('%b-%d %I:%M%p', localtime())})
+          'time_stamp': strftime('%b-%d %I:%M%p', localtime())}, room=data['room'])
+
+
+@socketio.on('join')
+def join(data):
+    # TODO: description
+
+    join_room(data['room'])
+    send({'msg': data['username'] + " has joined the " + data['room'] + " room."}, room=data['room'])
+
+
+@socketio.on('leave')
+def leave(data):
+    # TODO: description
+
+    leave_room(data['room'])
+    send({'msg': data['username'] + " has joined the " + data['room'] + " room."}, room=data['room'])
 
 
 if __name__ == "__main__":
