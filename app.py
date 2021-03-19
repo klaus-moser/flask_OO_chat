@@ -128,30 +128,39 @@ def logout() -> str:
 
 # Event handlers
 @socketio.on('message')
-def message(data):
-    # TODO: add function description
-    # It will send a message to the connected client(s)
-    # pushes to the default/predefined event-bucket 'message'
-    print("{}".format(data))
+def message(data) -> None:
+    """
+    Sends a message to the connected client(s) to the default/predefined event-bucket 'message'
+    :param data: {'msg': msg, 'username': username, 'time_stamp': %b-%d %I:%M%p, 'room': room}
+    :return: send()
+    """
     send({'msg': data['msg'],
           'username': data['username'],
           'time_stamp': strftime('%b-%d %I:%M%p', localtime())}, room=data['room'])
 
 
 @socketio.on('join')
-def join(data):
-    # TODO: description
-
+def join(data) -> None:
+    """
+    Receives a message to join an room.
+    Sends a message to the connected client(s) to the default/predefined event-bucket 'message'
+    :param data: {'msg': username, 'room': room}
+    :return: send()
+    """
     join_room(data['room'])
     send({'msg': data['username'] + " has joined the " + data['room'] + " room."}, room=data['room'])
 
 
 @socketio.on('leave')
-def leave(data):
-    # TODO: description
-
+def leave(data) -> None:
+    """
+    Receives a message to leave an room.
+    Sends a message to the connected client(s) to the default/predefined event-bucket 'message'
+    :param data: {'msg': username, 'room': room}
+    :return: send()
+    """
     leave_room(data['room'])
-    send({'msg': data['username'] + " has joined the " + data['room'] + " room."}, room=data['room'])
+    send({'msg': data['username'] + " has left the " + data['room'] + " room."}, room=data['room'])
 
 
 if __name__ == "__main__":
