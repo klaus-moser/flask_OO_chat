@@ -31,13 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             printSysMsg(data.msg);
         }
-    })
+    });
 
-    // Event listener for clicks
+    // Send message
     document.querySelector('#send_message').onclick = () => {
-        // Send message
         socket.send({'msg': document.querySelector('#user_message').value,
             'username': username, 'time_stamp': "", 'room': room});
+
+        // Clear input area
+        document.querySelector('#user_message').value = '';
     }
 
     // Room selection
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 room = newRoom;
             }
         }
-    })
+    });
 
     // Leave room
     function leaveRoom(room) {
@@ -77,6 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Clear message area
         document.querySelector('#display-message-section').innerHTML = '';
+
+        // Autofocus on input box
+        document.querySelector('#user_message').focus();
     }
 
     // Print system messages
